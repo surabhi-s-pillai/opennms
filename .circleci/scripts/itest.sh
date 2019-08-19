@@ -73,6 +73,9 @@ echo "#### Executing tests"
 cd ~/project
 find_tests
 echo "Build complete. Verifying..."
+# DFMT cannot support spaces
+export DFMT="yyyy-MM-dd;HH:mm:ss,S"
+export MAVEN_OPTS="$MAVEN_OPTS -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=$DFMT"
 mvn verify -P'!checkstyle' \
            -DupdatePolicy=never \
            -Dbuild.skip.tarball=true \

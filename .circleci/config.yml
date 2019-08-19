@@ -123,12 +123,16 @@ commands:
           when: always
           command: |
             mkdir -p ~/test-results/junit
-            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
-            find . -type f -regex ".*/target/failsafe-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
+            find . -type f -regextype posix-extended \
+                   -regex ".*/target/(surefire|failsafe)-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
             mkdir -p ~/test-artifacts/recordings
             cp -R ~/project/smoke-test/target/*.flv ~/test-artifacts/recordings || true
             cp -R ~/project/smoke-test/target/screenshots ~/test-artifacts/ || true
             cp -R ~/project/smoke-test/target/logs ~/test-artifacts/ || true
+            mkdir -p ~/test-artifacts/dumps
+            find . -type f -regextype posix-extended \
+                   -regex ".*/target/(surefire|failsafe)-reports-[0-9]+/.*(dump|dumpstream)" \
+                   -exec cp {} ~/test-artifacts/dumps/ \;
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
@@ -206,8 +210,8 @@ commands:
           when: always
           command: |
             mkdir -p ~/test-results/junit
-            find . -type f -regex ".*/target/surefire-reports-[0-9]+/.*xml" -exec cp {} ~/test-results/junit/ \;
-            find . -type f -regex ".*/target/failsafe-reports-[0-9]+/.*xml" -exec cp {} ~/test-results/junit/ \;
+            find . -type f -regextype posix-extended \
+                   -regex ".*/target/(surefire|failsafe)-reports-[0-9]+/.*xml" -exec cp {} ~/test-results/junit/ \;
       - run:
           name: Gather tests
           when: always
@@ -263,8 +267,8 @@ commands:
           when: always
           command: |
             mkdir -p ~/test-results/junit
-            find . -type f -regex ".*/target/surefire-reports-[0-9]+/.*xml" -exec cp {} ~/test-results/junit/ \;
-            find . -type f -regex ".*/target/failsafe-reports-[0-9]+/.*xml" -exec cp {} ~/test-results/junit/ \;
+            find . -type f -regextype posix-extended \
+                   -regex ".*/target/(surefire|failsafe)-reports-[0-9]+/.*xml" -exec cp {} ~/test-results/junit/ \;
       - run:
           name: Gather tests
           when: always
@@ -274,6 +278,14 @@ commands:
             cp ./failsafe_classname* ~/generated-tests/
             cp ./projects_with_path ~/generated-tests/
             cp /tmp/this_node* ~/generated-tests/
+      - run:
+          name: Gather test artifacts
+          when: always
+          command: |
+            mkdir -p ~/test-artifacts/dumps
+            find . -type f -regextype posix-extended \
+                   -regex ".*/target/(surefire|failsafe)-reports-[0-9]+/.*(dump|dumpstream)" \
+                   -exec cp {} ~/test-artifacts/dumps/ \;
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
@@ -284,6 +296,10 @@ commands:
           when: always
           path: ~/generated-tests
           destination: generated-tests
+      - store_artifacts:
+          when: always
+          path: ~/test-artifacts
+          destination: test-artifacts
 
 workflows:
   nightly-coverage:
@@ -421,7 +437,7 @@ jobs:
           name: Build RPMs
           command: |
             export NODE_OPTIONS=--max_old_space_size=1024
-            export CCI_MAXCPU=3
+            export CCI_MAXCPU=4
             export CCI_VAADINJAVAMAXMEM=768m
             ./makerpm.sh -a -d -S tools/packages/minion/minion.spec
       - setup_remote_docker:
@@ -453,7 +469,7 @@ jobs:
           name: Build RPMs
           command: |
             export NODE_OPTIONS=--max_old_space_size=1024
-            export CCI_MAXCPU=3
+            export CCI_MAXCPU=4
             export CCI_VAADINJAVAMAXMEM=768m
             ./makerpm.sh -a -d -S tools/packages/sentinel/sentinel.spec
       - setup_remote_docker:
@@ -566,4 +582,3 @@ jobs:
           at: ~/
       - run-smoke-tests:
           minimal: true
-
