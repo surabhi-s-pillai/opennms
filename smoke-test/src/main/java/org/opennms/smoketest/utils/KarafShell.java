@@ -79,7 +79,7 @@ public class KarafShell {
                         if (command != null) {
                             pipe.println(command);
                         }
-                        pipe.println("log:display");
+                        pipe.println("log:display -n 50");
                         pipe.println("logout");
 
                         // Wait for karaf to process the commands
@@ -98,7 +98,7 @@ public class KarafShell {
                         if (command != null) {
                             logger.info(command);
                         }
-                        logger.info("log:display");
+                        logger.info("log:display -n 50");
                         logger.info("{}", shellOutput);
 
                         return result;

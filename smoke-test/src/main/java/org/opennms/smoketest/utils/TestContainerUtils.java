@@ -32,7 +32,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -68,7 +67,7 @@ public class TestContainerUtils {
         }
         hostConfig.withMemory(4 * 1024 * 1024 * 1024L); // Hard limit to 4GB of memory
         // cpu-period denotes the period in which container CPU utilisation is tracked
-        hostConfig.withCpuPeriod((int)TimeUnit.MILLISECONDS.toMicros(100));
+        hostConfig.withCpuPeriod(TimeUnit.MILLISECONDS.toMicros(100));
         // cpu-quota is the total amount of CPU time that a container can use in each cpu-period
         // say this is equal to the cpu-period set above, then the container can use 1 CPU at 100%
         // if this is 2x the cpu-period. then the container can use 2 CPUs at 100%, and so on...

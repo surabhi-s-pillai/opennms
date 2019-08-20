@@ -28,27 +28,27 @@
 
 package org.opennms.smoketest.health;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.Timeout;
-import org.opennms.smoketest.containers.OpenNMSContainer;
-import org.opennms.smoketest.stacks.OpenNMSStack;
-import org.opennms.smoketest.stacks.IpcStrategy;
-import org.opennms.smoketest.stacks.StackModel;
-import org.opennms.smoketest.utils.SshClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+import static com.jayway.awaitility.Awaitility.await;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
-import static com.jayway.awaitility.Awaitility.await;
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.Timeout;
+import org.opennms.smoketest.containers.OpenNMSContainer;
+import org.opennms.smoketest.stacks.IpcStrategy;
+import org.opennms.smoketest.stacks.OpenNMSStack;
+import org.opennms.smoketest.stacks.StackModel;
+import org.opennms.smoketest.utils.SshClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 public class HealthCheckIT {
 
@@ -108,7 +108,7 @@ public class HealthCheckIT {
                         final String shellOutput = sshClient.getStdout();
 
                         // Log what was read, to help debugging issues
-                        LOG.info("log:display");
+                        LOG.info("log:display -n 50");
                         LOG.info("{}", shellOutput);
 
                         final int count = StringUtils.countOccurrencesOf(shellOutput, "Success");
@@ -140,7 +140,7 @@ public class HealthCheckIT {
                         final String shellOutput = sshClient.getStdout();
                         final int count = StringUtils.countOccurrencesOf(shellOutput, "Metric set:");
 
-                        LOG.info("log:display");
+                        LOG.info("log:display -n 50");
                         LOG.info("{}", shellOutput);
                         return count;
                     } catch (Exception ex) {

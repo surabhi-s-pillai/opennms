@@ -37,13 +37,10 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.opennms.netmgt.flows.elastic.NetflowVersion;
@@ -134,7 +131,7 @@ public class FlowTester {
         factory.setHttpClientConfig(new HttpClientConfig.Builder(elasticRestUrl)
                 .connTimeout(5000)
                 .readTimeout(10000)
-                .multiThreaded(true).build());
+                .multiThreaded(false).build());
 
         try {
             client = factory.getObject();
@@ -152,14 +149,19 @@ public class FlowTester {
                         packet.getResource(), packet.getFlowCount(),
                         packet.getDestinationAddress());
                 packet.send();
+                LOG.info ("Packets sent");
             }
 
+            LOG.info("Preparing for flow verification");
             for (NetflowVersion netflowVersion : packetsByProtocol.keySet()) {
+                LOG.info("Fetching packetsForProtocol");
                 final List<FlowPacket> packetsForProtocol = packetsByProtocol.get(netflowVersion);
+                LOG.info("Fetching numFlowsExpected");
                 final int numFlowsExpected = packetsForProtocol.stream().mapToInt(FlowPacket::getFlowCount).sum();
 
                 LOG.info("Verifying flows for {}", netflowVersion);
                 verify(() -> {
+                    LOG.info("Generating and executing search");
                     // Verify directly in Elasticsearch that the flows have been created
                     final String query = "{\"query\":{\"term\":{\"netflow.version\":{\"value\":"
                             + gson.toJson(netflowVersion)
@@ -223,7 +225,7 @@ public class FlowTester {
         Objects.requireNonNull(verifyCallback);
 
         // Verify
-        with().pollInterval(15, SECONDS).await().atMost(5, MINUTES).until(() -> {
+        with().pollInterval(1, SECONDS).await().atMost(90, SECONDS).until(() -> {
             try {
                 LOG.info("Querying elastic search");
                 return verifyCallback.test();
