@@ -131,7 +131,7 @@ commands:
             cp -R ~/project/smoke-test/target/logs ~/test-artifacts/ || true
             mkdir -p ~/test-artifacts/dumps
             find . -type f -regextype posix-extended \
-                   -regex ".*/target/(surefire|failsafe)-reports-[0-9]+/.*(dump|dumpstream)" \
+                   -regex ".*/target/(surefire|failsafe)-reports/.*(dump|dumpstream)" \
                    -exec cp {} ~/test-artifacts/dumps/ \;
       - store_test_results:
           path: ~/test-results
