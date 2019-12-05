@@ -885,6 +885,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.opennms.core.ipc.grpc</groupId>
+      <artifactId>org.opennms.core.ipc.grpc.server</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.opennms.core.tracing</groupId>
       <artifactId>org.opennms.core.tracing.registry</artifactId>
       <version>${project.version}</version>

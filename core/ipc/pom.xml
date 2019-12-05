@@ -14,5 +14,6 @@
     <module>common</module>
     <module>rpc</module>
     <module>sink</module>
+    <module>grpc</module>
   </modules>
 </project>
