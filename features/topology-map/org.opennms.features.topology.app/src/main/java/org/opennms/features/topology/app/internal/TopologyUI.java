@@ -285,6 +285,7 @@ public class TopologyUI extends UI implements MenuUpdateListener, ContextMenuHan
                 // We do not execute if already checked, as this would disable an already checked operation.
                 if (!operation.isChecked(targets, operationContext)) {
                     operation.execute(targets, operationContext);
+                    System.out.println("Hi!!!!!!!!!!!!");
                     return true;
                 }
             }

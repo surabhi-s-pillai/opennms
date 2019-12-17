@@ -1114,7 +1114,7 @@
     <mock.runSnmpTests>false</mock.runSnmpTests>
     <mock.snmpHost>localhost</mock.snmpHost>
     <install.version>${project.version}</install.version>
-    <display.version>${install.version}</display.version>
+    <display.version>0.1.4</display.version>
     <opennms.home>${dist.dir}/${dist.name}</opennms.home>
     <opennms.osgi.version>25.1.2.SNAPSHOT</opennms.osgi.version>
     <maven.metadata.legacy>true</maven.metadata.legacy>
